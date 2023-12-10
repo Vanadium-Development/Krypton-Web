@@ -1,0 +1,45 @@
+p-inputGroup {
+  margin-bottom: 15px;
+
+  &:last-of-type {
+    margin-bottom: 5px;
+  }
+}
+
+p-button {
+  display: block;
+  margin-top: 5px
+}
+
+.container {
+  width: 35%;
+  margin: 0 auto;
+
+  @media screen and (max-width: 900px) {
+    width: 80%
+  }
+}
+
+#generation-type {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.generation-type-item {
+  margin: 10px;
+}
+
+#generate-btn {
+  margin-top: 10px;
+}
+#download-buttons {
+  display: flex;
+  width: 100%;
+  button {
+    flex: 1;
+    margin: 10px 5px 10px 5px;
+    width: 100%;
+  }
+}
+

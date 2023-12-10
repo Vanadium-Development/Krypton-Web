@@ -1,0 +1,65 @@
+<div class="container">
+  <p-card id="login-card" header="Krypton Register" subheader="Here you can create your user.">
+
+    <label for="username">Username</label>
+    <p-inputGroup>
+      <p-inputGroupAddon>
+        <span class="material-symbols-outlined">person</span>
+      </p-inputGroupAddon>
+      <input pInputText id="username" type="text" placeholder="JohnDoe1">
+    </p-inputGroup>
+
+    <label for="firstname">First name</label>
+    <p-inputGroup>
+      <p-inputGroupAddon>
+        <span class="material-symbols-outlined">person</span>
+      </p-inputGroupAddon>
+      <input pInputText id="firstname" type="text" placeholder="John">
+    </p-inputGroup>
+
+    <label for="lastname">Last name</label>
+    <p-inputGroup>
+      <p-inputGroupAddon>
+        <span class="material-symbols-outlined">person</span>
+      </p-inputGroupAddon>
+      <input pInputText id="lastname" type="text" placeholder="Doe">
+    </p-inputGroup>
+
+    @if (formState() == FormState.INITIAL) {
+      <p>To create your account, you have to generate a keypair which is used to authenticate and encrypt your data.</p>
+
+      <div id="generation-type">
+        <div class="generation-type-item">
+          <p-radioButton id="gt-rsa" value="RSA" [(ngModel)]="generationType" />
+          <label for="gt-rsa">RSA</label>
+        </div>
+
+        <div class="generation-type-item">
+          <p-radioButton [disabled]="true" id="gt-ec" value="EC" [(ngModel)]="generationType" />
+          <label for="gt-ec">Elliptic Curve (coming soon)</label>
+        </div>
+      </div>
+
+      @if (generationType == "RSA") {
+        <p-message severity="info" text="Classic encryption with larger keys. Older, slower, but widely used"></p-message>
+      } @else {
+        <p-message severity="info" text="Modern encryption with shorter keys. Efficient and widely adopted."></p-message>
+      }
+
+      <button (click)="generateKeys()" [loading]="generateKeyLoading" id="generate-btn" pButton class="p-button-warning">Generate key pair</button>
+    } @else {
+      <div id="download-buttons">
+        <button (click)="openKey('public')" pButton [disabled]="!publicKeyUrl()">Download Public Key</button>
+        <button (click)="openKey('private')" pButton [disabled]="!privateKeyUrl()">Download Private Key</button>
+      </div>
+      <p-message severity="warn" text="Download the keys, this action cannot be done later. Keep your private key secret!"></p-message>
+
+
+      <p-button>Login</p-button>
+
+    }
+
+
+  </p-card>
+
+</div>

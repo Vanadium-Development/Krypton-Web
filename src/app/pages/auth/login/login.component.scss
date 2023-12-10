@@ -1,0 +1,38 @@
+p-inputGroup:nth-of-type(1) {
+  margin-bottom: 15px;
+}
+
+button {
+  display: block;
+  margin-top: 5px
+}
+
+.container {
+  width: 35%;
+  margin: 0 auto;
+
+  @media screen and (max-width: 900px) {
+    width: 80%
+  }
+}
+p-message {
+  display: block;
+  margin: 10px;
+}
+
+.pk-status {
+  display: block;
+  margin-top: 10px;
+
+
+}
+
+.invalid {
+  color: #f32323;
+}
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+
+
+}

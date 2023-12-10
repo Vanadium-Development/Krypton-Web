@@ -1,0 +1,36 @@
+<div class="container">
+  <p-card id="login-card" header="Krypton Login" subheader="To log into your account, please provide your username and private-key.">
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <label for="username">Username</label>
+      <p-inputGroup>
+        <p-inputGroupAddon>
+          <span class="material-symbols-outlined">person</span>
+        </p-inputGroupAddon>
+        <input [formControl]="form.controls.username" pInputText id="username" type="text" placeholder="JohnDoe1">
+      </p-inputGroup>
+
+      <label for="private-key">RSA / EC Private Key</label>
+      <p-inputGroup>
+        <p-inputGroupAddon>
+          <span class="material-symbols-outlined">key</span>
+        </p-inputGroupAddon>
+        <input [formControl]="form.controls.pkFile" pInputText id="private-key" type="file" (change)="onFileChange($event)">
+      </p-inputGroup>
+
+      <small>This private key is only used locally to decrypt your credentials and authenticate with the server.</small>
+
+      @if(publicKeyHash()) {
+        @if (publicKeyHash() == "invalid") {
+          <small class="pk-status invalid">Uploaded key is invalid!</small>
+        } @else {
+          <small class="pk-status" >Private key valid! <br> Public key hash: <pre>{{publicKeyHash()}}</pre></small>
+        }
+      }
+
+      <button pButton type="submit">Login</button>
+    </form>
+
+  </p-card>
+
+</div>
