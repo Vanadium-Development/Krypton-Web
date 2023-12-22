@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "build-openapi": "openapi-generator generate -i submodules/openapi/spec.yaml -g typescript-angular -o ./generated-sources/openapi",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "npm run build-openapi && ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

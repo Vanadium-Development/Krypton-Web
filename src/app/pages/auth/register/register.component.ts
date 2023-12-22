@@ -34,6 +34,7 @@ export class RegisterComponent implements OnInit {
 
   privateKeyUrl = signal("")
   publicKeyUrl = signal("")
+  publicKey: string = ""
 
 
   protected readonly FormState = FormState;
@@ -76,8 +77,13 @@ export class RegisterComponent implements OnInit {
   }
 
   handleKeys(privateKey: string, publicKey: string) {
+    this.publicKey = publicKey;
     this.privateKeyUrl.set(URL.createObjectURL(new Blob ([privateKey], {type: "text/plain"})))
     this.publicKeyUrl.set(URL.createObjectURL(new Blob ([publicKey], {type: "text/plain"})))
+  }
+
+  submit() {
+
   }
 
   protected readonly open = open;

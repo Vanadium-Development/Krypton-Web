@@ -1,6 +1,11 @@
 <div class="container">
   <p-card id="login-card" header="Krypton Login" subheader="To log into your account, please provide your username and private-key.">
 
+    <div id="error-box">
+      @if(error) {
+        <p-message severity="error" text="{{error}}"></p-message>
+      }
+    </div>
     <form [formGroup]="form" (ngSubmit)="submit()">
       <label for="username">Username</label>
       <p-inputGroup>
@@ -25,8 +30,28 @@
           <small class="pk-status invalid">Uploaded key is invalid!</small>
         } @else {
           <small class="pk-status" >Private key valid! <br> Public key hash: <pre>{{publicKeyHash()}}</pre></small>
+
+
+          <label for="private-key-password">Private Key storage password</label>
+          <p-inputGroup>
+            <p-inputGroupAddon>
+              <span class="material-symbols-outlined">password</span>
+            </p-inputGroupAddon>
+            <input [formControl]="form.controls.pkStorePassword" pInputText id="private-key-password" type="password">
+          </p-inputGroup>
+
+          <label for="private-key-password">Repeat Private Key storage password <b>Leave empty for unencrypted store. (Not recommended)</b></label>
+          <p-inputGroup>
+            <p-inputGroupAddon>
+              <span class="material-symbols-outlined">password</span>
+            </p-inputGroupAddon>
+            <input [formControl]="form.controls.pkStorePasswordRepeat" pInputText id="private-key-password-repeat" type="password">
+          </p-inputGroup>
+          <small>To store your private key securely in your browser we have to encrypt it with a password. Please provide an encryption password.</small>
+
         }
       }
+
 
       <button pButton type="submit">Login</button>
     </form>

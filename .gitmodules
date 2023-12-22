@@ -1,0 +1,3 @@
+[submodule "submodules/openapi"]
+	path = submodules/openapi
+	url = git@github.com:Vanadium-Development/Krypton-OpenAPI-Spec.git
