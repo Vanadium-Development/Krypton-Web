@@ -47,7 +47,7 @@ export class RegisterComponent implements OnInit {
   generateKeys() {
     this.generateKeyLoading = true
 
-    if(this.generationType == "RSA") {
+    if (this.generationType == "RSA") {
       forge.pki.rsa.generateKeyPair({bits: 4096, workers: 2}, (err, keypair) => {
         this.handleKeys(
           forge.pki.privateKeyToPem(keypair.privateKey),
@@ -78,15 +78,13 @@ export class RegisterComponent implements OnInit {
 
   handleKeys(privateKey: string, publicKey: string) {
     this.publicKey = publicKey;
-    this.privateKeyUrl.set(URL.createObjectURL(new Blob ([privateKey], {type: "text/plain"})))
-    this.publicKeyUrl.set(URL.createObjectURL(new Blob ([publicKey], {type: "text/plain"})))
+    this.privateKeyUrl.set(URL.createObjectURL(new Blob([privateKey], {type: "text/plain"})))
+    this.publicKeyUrl.set(URL.createObjectURL(new Blob([publicKey], {type: "text/plain"})))
   }
 
   submit() {
 
   }
-
-  protected readonly open = open;
 }
 
 enum FormState {

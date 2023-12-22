@@ -12,6 +12,7 @@ import {AuthenticationService, MeService} from "../../../../../generated-sources
 import {MessageService} from "primeng/api";
 import {ErrorUiService} from "../../../service/error-ui.service";
 import {CheckboxModule} from "primeng/checkbox";
+import {RouterLink} from "@angular/router";
 
 @Component({
   selector: 'app-login',
@@ -25,7 +26,8 @@ import {CheckboxModule} from "primeng/checkbox";
     ButtonModule,
     ReactiveFormsModule,
     MessageModule,
-    CheckboxModule
+    CheckboxModule,
+    RouterLink
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
@@ -83,9 +85,6 @@ export class LoginComponent {
   }
 
   submit() {
-
-
-
     if(this.form.valid) {
       if(this.publicKeyHash() != "" && this.publicKeyHash() != "invalid") {
 
