@@ -42,4 +42,18 @@ p-button {
     width: 100%;
   }
 }
+p-message {
+  display: block;
+}
+#error-box {
+  margin: 0 auto;
+  width: fit-content;
+}
 
+.key-status-message {
+  margin-bottom: 5px;
+}
+
+.underlined {
+  text-decoration: underline;
+}
