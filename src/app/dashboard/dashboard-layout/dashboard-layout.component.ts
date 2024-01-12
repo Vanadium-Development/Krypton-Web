@@ -7,7 +7,6 @@ import {InputGroupModule} from "primeng/inputgroup";
 import {InputGroupAddonModule} from "primeng/inputgroupaddon";
 import {ChipsModule} from "primeng/chips";
 import {ButtonModule} from "primeng/button";
-import {FormGroup} from "@angular/forms";
 
 @Component({
   selector: 'app-dashboard-layout',
