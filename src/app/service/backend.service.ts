@@ -33,7 +33,7 @@ export class BackendService {
         this._meUser.set(v)
         console.log("Successfully updated logged-in user.")
       },
-      error: e => {
+      error: _ => {
         console.log("Failed to fetch me-user.", retry ? "Retrying..." : "")
         if(retry)
           this.updateMeUser(false)

@@ -12,7 +12,7 @@ import {MessageService} from "primeng/api";
 import {CheckboxModule} from "primeng/checkbox";
 import {Router, RouterLink} from "@angular/router";
 import {KeystoreService} from "../../../service/keystore.service";
-import {AuthenticationService, MeService} from "../../../../../generated-sources/openapi";
+import {AuthenticationService} from "../../../../../generated-sources/openapi";
 import {ToastService} from "../../../service/toast.service";
 import {BackendService} from "../../../service/backend.service";
 
