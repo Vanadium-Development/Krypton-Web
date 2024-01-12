@@ -11,7 +11,10 @@ export const appConfig: ApplicationConfig = {
   providers: [provideRouter(routes), provideHttpClient(), {
     provide: Configuration,
     useValue: new Configuration({
-      basePath: "/api"
+      basePath: "/api",
+      credentials: {
+        token: localStorage.getItem("krypton_token") ?? ""
+      }
     })
   }, MessageService, provideAnimations()]
 };

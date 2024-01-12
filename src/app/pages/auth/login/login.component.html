@@ -32,7 +32,7 @@
           <small class="pk-status" >Private key valid! <br> Public key hash: <pre>{{publicKeyHash()}}</pre></small>
 
 
-          <label for="private-key-password">Private Key storage password</label>
+          <label for="private-key-password">Private Key storage password <b>Leave empty for unencrypted store. (Not recommended)</b></label>
           <p-inputGroup>
             <p-inputGroupAddon>
               <span class="material-symbols-outlined">password</span>
@@ -40,7 +40,7 @@
             <input [formControl]="form.controls.pkStorePassword" pInputText id="private-key-password" type="password">
           </p-inputGroup>
 
-          <label for="private-key-password">Repeat Private Key storage password <b>Leave empty for unencrypted store. (Not recommended)</b></label>
+          <label for="private-key-password">Repeat Private Key storage password</label>
           <p-inputGroup>
             <p-inputGroupAddon>
               <span class="material-symbols-outlined">password</span>

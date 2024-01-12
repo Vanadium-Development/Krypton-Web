@@ -8,11 +8,13 @@ import {ButtonModule} from "primeng/button";
 import {FormBuilder, FormControl, ReactiveFormsModule, Validators} from "@angular/forms";
 import * as forge from "node-forge"
 import {MessageModule} from "primeng/message";
-import {AuthenticationService, MeService} from "../../../../../generated-sources/openapi";
 import {MessageService} from "primeng/api";
-import {ErrorUiService} from "../../../service/error-ui.service";
 import {CheckboxModule} from "primeng/checkbox";
-import {RouterLink} from "@angular/router";
+import {Router, RouterLink} from "@angular/router";
+import {KeystoreService} from "../../../service/keystore.service";
+import {AuthenticationService, MeService} from "../../../../../generated-sources/openapi";
+import {ToastService} from "../../../service/toast.service";
+import {BackendService} from "../../../service/backend.service";
 
 @Component({
   selector: 'app-login',
@@ -35,11 +37,17 @@ import {RouterLink} from "@angular/router";
 })
 export class LoginComponent {
 
+  keystoreService = inject(KeystoreService)
+  messageService = inject(MessageService)
   authService = inject(AuthenticationService)
-  meService = inject(MeService)
-  errorService = inject(ErrorUiService)
+  toastService = inject(ToastService)
+  backendService = inject(BackendService)
+  router = inject(Router)
+
   error: string = ""
 
+  privateKeyText: string = ""
+  privateKey?: forge.pki.rsa.PrivateKey = undefined
 
 
   publicKeyHash = signal("")
@@ -48,8 +56,8 @@ export class LoginComponent {
     .group({
       username: new FormControl('', Validators.required),
       pkFile: new FormControl('', Validators.required),
-      pkStorePassword: new FormControl('', Validators.required),
-      pkStorePasswordRepeat: new FormControl('', Validators.required),
+      pkStorePassword: new FormControl(''),
+      pkStorePasswordRepeat: new FormControl(''),
       storePkUnencrypted: new FormControl(false)
     })
 
@@ -61,6 +69,8 @@ export class LoginComponent {
     fileReader.onload = () => {
       try {
         const privateKey = forge.pki.privateKeyFromPem(fileReader.result as string)
+        this.privateKeyText = fileReader.result as string
+        this.privateKey = privateKey
 
         const publicKey = forge.pki.publicKeyToPem(forge.pki.setRsaPublicKey(privateKey.n, privateKey.e))
 
@@ -79,14 +89,49 @@ export class LoginComponent {
   }
 
 
-  async readPrivateKeyFile() {
-
-    const file = this.form.controls.pkFile
-  }
-
-  submit() {
+  async submit() {
     if(this.form.valid) {
+      this.error = ""
       if(this.publicKeyHash() != "" && this.publicKeyHash() != "invalid") {
+
+        if(this.form.controls.pkStorePassword.value && (this.form.controls.pkStorePassword.value != this.form.controls.pkStorePasswordRepeat.value)) {
+          this.error = "Passwords do not match. Please ensure that the passwords entered in both fields are identical."
+          return
+        }
+
+        this.keystoreService.storePrivateKey(this.privateKeyText, this.form.controls.pkStorePassword.value ?? undefined)
+
+        const privateKey = this.keystoreService.retrievePrivateKey(this.form.controls.pkStorePassword.value ?? undefined)
+
+        if(!privateKey) {
+          this.messageService.add({severity: "error", summary: "Error", detail: "Key retrieval test was not successful. Please try again."})
+          return;
+        }
+
+
+
+        this.authService.login({username: this.form.controls.username.value!!}).subscribe({
+          next: response => {
+            try {
+              const decryptedToken = privateKey.decrypt(forge.util.decode64(response.token))
+
+              this.backendService.storeToken(decryptedToken)
+
+              this.backendService.updateMeUser()
+
+              this.router.navigate(["/"])
+              this.toastService.showSuccessCustom("Login", "Your login was successful. You will be redirected.")
+            } catch (e) {
+              this.toastService.showErrorCustom("Error", "Private key is invalid!")
+              console.log(e)
+              return
+            }
+          },
+          error: e => this.toastService.showError(e)
+        })
+
+
+
 
 
       } else {
@@ -96,28 +141,6 @@ export class LoginComponent {
       this.error = "Please fill out all fields"
     }
 
-
-    // // POC "Storing private key securely"
-    // const key = (forge.pkcs5.pbkdf2("hello", "abcd", 1000, 32))
-    //
-    // const cipher = forge.cipher.createCipher("AES-CBC", key)
-    // const decipher = forge.cipher.createDecipher("AES-CBC", key)
-    //
-    // let iv = forge.random.getBytesSync(16);
-    // cipher.start({iv: iv})
-    // cipher.update(forge.util.createBuffer("TEST"))
-    // cipher.finish()
-    //
-    // const encrypted = forge.util.bytesToHex(iv + cipher.output.getBytes())
-    // console.log(encrypted)
-    //
-    // decipher.start({iv: forge.util.hexToBytes(encrypted).substring(0, 16)})
-    // const data = forge.util.hexToBytes(encrypted).substring(16)
-    //
-    // decipher.update(forge.util.createBuffer(data))
-    //
-    // decipher.finish
-    // console.log(decipher.output.toString())
   }
 
 

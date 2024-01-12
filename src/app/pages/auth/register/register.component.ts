@@ -12,9 +12,8 @@ import {SelectButtonModule} from "primeng/selectbutton";
 import {TooltipModule} from "primeng/tooltip";
 import {UserService} from "../../../../../generated-sources/openapi";
 import {MessageService} from "primeng/api";
-import {ToastModule} from "primeng/toast";
 import {Router, RouterLink} from "@angular/router";
-import {ErrorUiService} from "../../../service/error-ui.service";
+import {ToastService} from "../../../service/toast.service";
 
 @Component({
   selector: 'app-register',
@@ -51,7 +50,7 @@ export class RegisterComponent implements OnInit {
 
   userService = inject(UserService)
   messageService = inject(MessageService)
-  errorUi = inject(ErrorUiService)
+  toastService = inject(ToastService)
   router = inject(Router)
 
   privateKeyDownloaded = signal(false)
@@ -143,7 +142,7 @@ export class RegisterComponent implements OnInit {
 
       },
       error: e => {
-        this.errorUi.showError(e)
+        this.toastService.showError(e)
       }
     })
 
