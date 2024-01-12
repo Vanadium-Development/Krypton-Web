@@ -32,7 +32,7 @@
           <small class="pk-status" >Private key valid! <br> Public key hash: <pre>{{publicKeyHash()}}</pre></small>
 
 
-          <label for="private-key-password">Private Key storage password</label>
+          <label for="private-key-password">Private Key storage password <b>Leave empty for unencrypted store. (Not recommended)</b></label>
           <p-inputGroup>
             <p-inputGroupAddon>
               <span class="material-symbols-outlined">password</span>
@@ -40,7 +40,7 @@
             <input [formControl]="form.controls.pkStorePassword" pInputText id="private-key-password" type="password">
           </p-inputGroup>
 
-          <label for="private-key-password">Repeat Private Key storage password <b>Leave empty for unencrypted store. (Not recommended)</b></label>
+          <label for="private-key-password">Repeat Private Key storage password</label>
           <p-inputGroup>
             <p-inputGroupAddon>
               <span class="material-symbols-outlined">password</span>
@@ -55,7 +55,7 @@
       <button pButton type="submit">Login</button>
     </form>
     <br>
-    <small class="pk-status">Don't yet have an account? <span [routerLink]="'/register'" class="underlined">Register Now</span></small>
+    <small class="pk-status">Don't yet have an account? <span style="cursor: pointer" [routerLink]="'/register'" class="underlined">Register Now</span></small>
 
   </p-card>
 
