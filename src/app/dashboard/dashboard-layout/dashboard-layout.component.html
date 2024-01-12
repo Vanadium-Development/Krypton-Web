@@ -1,0 +1,16 @@
+<router-outlet #layout></router-outlet>
+
+<p-blockUI [target]="layout" [blocked]="uiBlockService.privateKeyPasswordBlock()">
+  <p-card header="Password required" subheader="Your local password is required to unlock your private key">
+    <form>
+      <p-inputGroup>
+        <p-inputGroupAddon>
+          <span class="material-symbols-outlined">password</span>
+        </p-inputGroupAddon>
+        <input pInputText type="password" placeholder="Password">
+
+      </p-inputGroup>
+      <button id="pk-password-submit" pButton>Submit</button>
+    </form>
+  </p-card>
+</p-blockUI>

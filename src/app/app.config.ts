@@ -13,7 +13,7 @@ export const appConfig: ApplicationConfig = {
     useValue: new Configuration({
       basePath: "/api",
       credentials: {
-        token: localStorage.getItem("krypton_token") ?? ""
+        token: () => localStorage.getItem("krypton_token") ?? ""
       }
     })
   }, MessageService, provideAnimations()]
