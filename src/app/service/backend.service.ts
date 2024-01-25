@@ -3,6 +3,7 @@ import {AuthenticationService, MeService, User} from "../../../generated-sources
 import {KeystoreService} from "./keystore.service";
 import {Router} from "@angular/router";
 import forge from "node-forge";
+import {firstValueFrom} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -42,45 +43,61 @@ export class BackendService {
     return localStorage.getItem(this.USERNAME_PATH)
   }
 
-  checkTokenAvailability() {
-    console.log("Checking token validity...")
+  async updateAesKey() {
+    let aesKey = (await firstValueFrom(this.meService.getAesKey())).aesKey
 
-    this.meService.getOwnUser().subscribe({
-      complete: () => {
-        console.log("Token validity check successful.")
-        this.updateMeUser()
-      },
-      error: _ => {
-        if(!this.getUsername()) {
-          console.error("Token validity check failed... returning to login")
-          this.router.navigate(["/login"])
-        }
-        this.authService.login({username: this.getUsername() || ""}).subscribe({
-          next: v => {
-            let pk = this.keystoreService.privateKey()
-            if(!pk) {
-              console.error("Token validity check failed... returning to login")
-              this.router.navigate(["/login"])
-              return
-            }
+    this.keystoreService.aesKey.set(this.keystoreService.privateKey()!!.decrypt(forge.util.decode64(aesKey)))
+  }
 
+  async checkTokenAvailability() {
+    return new Promise((resolve) => {
+      console.log("Checking token validity...")
 
-
-            try {
-              let token = pk.decrypt(forge.util.decode64(v.token))
-              console.log("Token validity check failed: successfully refreshed token")
-              this.storeToken(token)
-              this.updateMeUser()
-            } catch (e) {
-              console.error(e)
-              console.error("Token validity check failed: failed to decrypt token, returning to login...")
-              this.router.navigate(["/login"])
-            }
-
-
+      this.meService.getOwnUser().subscribe({
+        complete: async () => {
+          console.log("Token validity check successful.")
+          this.updateMeUser()
+          await this.updateAesKey()
+          resolve(true)
+        },
+        error: _ => {
+          if(!this.getUsername()) {
+            console.error("Token validity check failed... returning to login")
+            this.router.navigate(["/login"])
+            resolve(false)
           }
-        })
-      }
+          this.authService.login({username: this.getUsername() || ""}).subscribe({
+            next: async v => {
+              let pk = this.keystoreService.privateKey()
+              if(!pk) {
+                console.error("Token validity check failed... returning to login")
+                this.router.navigate(["/login"])
+                resolve(false)
+                return
+              }
+
+
+
+              try {
+                let token = pk.decrypt(forge.util.decode64(v.token))
+                console.log("Token validity check failed: successfully refreshed token")
+                this.storeToken(token)
+                this.updateMeUser()
+                await this.updateAesKey()
+                resolve(true)
+              } catch (e) {
+                console.error(e)
+                console.error("Token validity check failed: failed to decrypt token, returning to login...")
+                this.router.navigate(["/login"])
+                resolve(false)
+
+              }
+
+
+            }
+          })
+        }
+      })
     })
   }
 

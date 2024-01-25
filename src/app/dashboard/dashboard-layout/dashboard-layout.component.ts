@@ -10,6 +10,7 @@ import {ButtonModule} from "primeng/button";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {KeystoreService} from "../../service/keystore.service";
 import {BackendService} from "../../service/backend.service";
+import {SidebarComponent} from "../components/sidebar/sidebar.component";
 
 @Component({
   selector: 'app-dashboard-layout',
@@ -22,7 +23,8 @@ import {BackendService} from "../../service/backend.service";
     InputGroupAddonModule,
     ChipsModule,
     ButtonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SidebarComponent
   ],
   templateUrl: './dashboard-layout.component.html',
   styleUrl: './dashboard-layout.component.scss'
@@ -43,12 +45,12 @@ export class DashboardLayoutComponent implements OnInit {
     this.uiBlockService.privateKeyPasswordBlock.set(!this.keystoreService.isPrivateKeyUnlocked())
   }
 
-  submitPassword() {
+  async submitPassword() {
     if(this.form.valid) {
       if(this.keystoreService.unlockPrivateKey(this.form.controls.password.value || "")) {
         this.uiBlockService.privateKeyPasswordBlock.set(false)
 
-        this.backendService.checkTokenAvailability()
+        await this.backendService.checkTokenAvailability()
 
         return
       }

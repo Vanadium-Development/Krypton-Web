@@ -10,7 +10,12 @@ export class KeystoreService {
   private PK_KEY_STORE_PATH = "krypton_pk_store"
   private SALT = "krypton"
   private _privateKey: WritableSignal<forge.pki.rsa.PrivateKey | undefined> = signal(undefined)
+  private _publicKey: WritableSignal<forge.pki.rsa.PublicKey | undefined> = signal(undefined)
   public privateKey = this._privateKey.asReadonly()
+  public publicKey = this._publicKey.asReadonly()
+
+  public aesKey: WritableSignal<string | undefined> = signal(undefined)
+
 
   storePrivateKey(privateKey: string, password?: string) {
     if(!password) {
@@ -67,6 +72,7 @@ export class KeystoreService {
     }
   }
 
+
   isPrivateKeyUnlocked(): boolean {
     const storedKey = localStorage.getItem(this.PK_KEY_STORE_PATH)
 
@@ -74,7 +80,9 @@ export class KeystoreService {
       return false
 
     if(storedKey.includes("-----BEGIN RSA PRIVATE KEY-----")) {
-      this._privateKey.set(forge.pki.privateKeyFromPem(storedKey))
+      let privateKey = forge.pki.privateKeyFromPem(storedKey);
+      this._privateKey.set(privateKey)
+      this._publicKey.set(forge.pki.rsa.setPublicKey(privateKey.n, privateKey.e))
       return true
     }
 
@@ -90,6 +98,7 @@ export class KeystoreService {
     }
 
     this._privateKey.set(privateKey)
+    this._publicKey.set(forge.pki.rsa.setPublicKey(privateKey.n, privateKey.e))
 
     return true
   }

@@ -1,0 +1,20 @@
+<div>
+  <form [formGroup]="form" (ngSubmit)="createVaultSubmit()">
+    <p-inputGroup>
+      <p-inputGroupAddon>
+        <span class="material-symbols-outlined">sell</span>
+      </p-inputGroupAddon>
+      <input [formControl]="form.controls.vaultName" id="vault-name" pInputText placeholder="Vault name">
+    </p-inputGroup>
+
+    <p-inputGroup>
+      <p-inputGroupAddon>
+        <span class="material-symbols-outlined">description</span>
+      </p-inputGroupAddon>
+      <input [formControl]="form.controls.description" id="vault-description" pInputText placeholder="Vault description">
+    </p-inputGroup>
+
+    <button pButton type="submit">Create</button>
+  </form>
+
+</div>

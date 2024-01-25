@@ -44,6 +44,8 @@ export class RegisterComponent implements OnInit {
 
   privateKeyUrl = signal("")
   publicKeyUrl = signal("")
+
+  publicKeyObject?: forge.pki.rsa.PublicKey
   publicKey: string = ""
   error: string = ""
 
@@ -77,6 +79,8 @@ export class RegisterComponent implements OnInit {
 
     if (this.form.controls.generationType.value == "RSA") {
       forge.pki.rsa.generateKeyPair({bits: 4096, workers: 2}, (err, keypair) => {
+        this.publicKeyObject = keypair.publicKey
+
         this.handleKeys(
           forge.pki.privateKeyToPem(keypair.privateKey),
           forge.pki.publicKeyToPem(keypair.publicKey),
@@ -129,11 +133,15 @@ export class RegisterComponent implements OnInit {
       return
     }
 
+    const aesKey = forge.util.encode64(forge.random.getBytesSync(32));
+
+
     this.userService.createUser({
       username: this.form.controls.username.value || "",
       firstname: this.form.controls.firstname.value  || "",
       lastname: this.form.controls.lastname.value || "",
-      pubKey: this.publicKey
+      pubKey: this.publicKey,
+      aesKey: forge.util.encode64(this.publicKeyObject!!.encrypt(aesKey))
     }).subscribe({
       next: async _ => {
         this.form.reset()

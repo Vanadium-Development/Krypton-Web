@@ -5,6 +5,9 @@ import {DashboardLayoutComponent} from "./dashboard/dashboard-layout/dashboard-l
 import {inject} from "@angular/core";
 import {BackendService} from "./service/backend.service";
 import {KeystoreService} from "./service/keystore.service";
+import {DashboardHomeComponent} from "./dashboard/dashboard-home/dashboard-home.component";
+import {DashboardVaultCreateComponent} from "./dashboard/dashboard-vault-create/dashboard-vault-create.component";
+import {DashboardVaultDetailComponent} from "./dashboard/dashboard-vault-detail/dashboard-vault-detail.component";
 
 export const routes: Routes = [
   {
@@ -18,14 +21,28 @@ export const routes: Routes = [
   {
     path: "",
     component: DashboardLayoutComponent,
-    canActivate: [() => {
+    children: [
+      {
+        path: "",
+        component: DashboardHomeComponent
+      },
+      {
+        path: "vault/create",
+        component: DashboardVaultCreateComponent
+      },
+      {
+        path: "vault/:id",
+        component: DashboardVaultDetailComponent
+      }
+    ],
+    canActivate: [async () => {
       let backendService = inject(BackendService)
       let router = inject(Router)
       let keystoreService = inject(KeystoreService)
 
       if(keystoreService.isPrivateKeyUnlocked()) {
-        backendService.checkTokenAvailability()
-        return
+        await backendService.checkTokenAvailability()
+        return true
       }
 
       if(!(backendService.getToken() && backendService.getUsername())) {

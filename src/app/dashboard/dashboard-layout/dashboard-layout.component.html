@@ -1,22 +1,35 @@
-<router-outlet #layout></router-outlet>
+<div #layout>
+  @if (!uiBlockService.privateKeyPasswordBlock()) {
+    <krypton-sidebar></krypton-sidebar>
 
-Logged in user {{backendService.meUser()?.firstname}} {{backendService.meUser()?.lastname}}
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
 
-<p-blockUI [target]="layout" [blocked]="uiBlockService.privateKeyPasswordBlock()">
-  <p-card header="Password required" subheader="Your local password is required to unlock your private key">
-    @if (passwordPromptError()) {
-      <p id="error">{{passwordPromptError()}}</p>
-    }
+  } @else {
+    <p-blockUI [target]="layout" [blocked]="uiBlockService.privateKeyPasswordBlock()">
+      <p-card header="Password required" subheader="Your local password is required to unlock your private key">
+        @if (passwordPromptError()) {
+          <p id="error">{{passwordPromptError()}}</p>
+        }
 
-    <form [formGroup]="form" (ngSubmit)="submitPassword()">
-      <p-inputGroup>
-        <p-inputGroupAddon>
-          <span class="material-symbols-outlined">password</span>
-        </p-inputGroupAddon>
-        <input [formControl]="form.controls.password" pInputText type="password" placeholder="Password">
+        <form [formGroup]="form" (ngSubmit)="submitPassword()">
+          <p-inputGroup>
+            <p-inputGroupAddon>
+              <span class="material-symbols-outlined">password</span>
+            </p-inputGroupAddon>
+            <input [formControl]="form.controls.password" pInputText type="password" placeholder="Password">
 
-      </p-inputGroup>
-      <button type="submit" id="pk-password-submit" pButton>Submit</button>
-    </form>
-  </p-card>
-</p-blockUI>
+          </p-inputGroup>
+          <button type="submit" id="pk-password-submit" pButton>Submit</button>
+        </form>
+      </p-card>
+    </p-blockUI>
+  }
+
+
+
+
+
+</div>
+
