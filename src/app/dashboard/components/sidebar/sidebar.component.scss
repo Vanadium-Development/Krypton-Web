@@ -1,0 +1,38 @@
+#sidebar-container {
+  background-color: #212121;
+  width: 20%;
+  position: fixed;
+  top: 0;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: inline;
+  overflow: scroll;
+}
+
+.profile-item {
+  margin-top: 10px;
+  width: auto;
+  display: flex;
+  justify-content: center;
+  white-space:nowrap;
+  text-overflow: ellipsis;
+
+}
+
+
+hr {
+  border-color: #3f3f3f;
+}
+
+.vault-list {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  gap: 10px;
+  button {
+    width: 90%;
+    text-overflow: ellipsis;
+  }
+}

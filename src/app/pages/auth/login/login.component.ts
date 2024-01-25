@@ -118,6 +118,7 @@ export class LoginComponent {
               this.backendService.storeToken(decryptedToken)
 
               this.backendService.updateMeUser()
+              this.backendService.storeUsername(this.form.controls.username.value!!)
 
               this.router.navigate(["/"])
               this.toastService.showSuccessCustom("Login", "Your login was successful. You will be redirected.")
