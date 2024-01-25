@@ -2,7 +2,6 @@ import {inject, Injectable, OnInit, signal, WritableSignal} from '@angular/core'
 import {MeService, Vault, VaultResponse, VaultService as BackendVaultService} from "../../../generated-sources/openapi";
 import {EncryptionService} from "./encryption.service";
 import {ToastService} from "./toast.service";
-import {UiBlockService} from "./ui-block.service";
 
 @Injectable({
   providedIn: 'root'

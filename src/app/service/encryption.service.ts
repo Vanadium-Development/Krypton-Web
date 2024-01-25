@@ -39,9 +39,7 @@ export class EncryptionService {
 
     decipher.finish()
 
-    const plainData = decipher.output.getBytes()
-
-    return plainData
+    return decipher.output.getBytes()
   }
 
 }
