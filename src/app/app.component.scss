@@ -1,0 +1,13 @@
+.backend-info {
+  position: absolute;
+  z-index: 100000;
+  user-select: none;
+  bottom: 10px;
+  pointer-events: none;
+
+  h1 {
+    font-style: italic;
+  }
+
+  left: 20px;
+}

@@ -4,6 +4,8 @@ import {KeystoreService} from "./keystore.service";
 import {Router} from "@angular/router";
 import forge from "node-forge";
 import {firstValueFrom} from "rxjs";
+import {Toast} from "primeng/toast";
+import {ToastService} from "./toast.service";
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +18,7 @@ export class BackendService {
   private authService = inject(AuthenticationService)
   private keystoreService = inject(KeystoreService)
   private router = inject(Router)
+  private toastService = inject(ToastService)
 
   private _token = signal("")
   public token = this._token.asReadonly()
@@ -111,6 +114,19 @@ export class BackendService {
         console.log("Failed to fetch me-user.", retry ? "Retrying..." : "")
         if(retry)
           this.updateMeUser(false)
+      }
+    })
+  }
+
+  async logout() {
+    this.meService.logout().subscribe({
+      next: () => {
+        this.toastService.showSuccessCustom("Success", "Successfully logged out.")
+        localStorage.clear()
+
+      },
+      error: e => {
+        this.toastService.showError(e)
       }
     })
   }

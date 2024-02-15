@@ -1,5 +1,13 @@
 import {inject, Injectable, OnInit, signal, WritableSignal} from '@angular/core';
-import {MeService, Vault, VaultResponse, VaultService as BackendVaultService} from "../../../generated-sources/openapi";
+import {
+  CredentialField,
+  CredentialFieldService,
+  CredentialService, FieldCreateRequest, FieldType,
+  MeService,
+  Vault,
+  VaultResponse,
+  VaultService as BackendVaultService
+} from "../../../generated-sources/openapi";
 import {EncryptionService} from "./encryption.service";
 import {ToastService} from "./toast.service";
 
@@ -12,6 +20,8 @@ export class VaultService implements OnInit {
   private meService = inject(MeService)
   private encryptionService = inject(EncryptionService)
   private toastService = inject(ToastService)
+  private credentialService = inject(CredentialService)
+  private credentialFieldService = inject(CredentialFieldService)
 
   private _loadedVaults: WritableSignal<Vault[]> = signal([])
   public loadedVaults = this._loadedVaults.asReadonly()
@@ -97,8 +107,77 @@ export class VaultService implements OnInit {
     vault.title = this.encryptionService.decrypt(vault.title)
     vault.description = this.encryptionService.decrypt(vault.description)
 
+    vault.credentials = vault.credentials.map(credential => {
+      return {
+        id: credential.id,
+        vault: credential.vault,
+        title: this.encryptionService.decrypt(credential.title),
+        body: credential.body.map(b => {
+          return {
+            id: b.id,
+            title: this.encryptionService.decrypt(b.title),
+            value: this.encryptionService.decrypt(b.value),
+            fieldType: b.fieldType
+          }
+        })
+      }
+    });
+
+
     return vault
   }
 
+  async updateCredential(id: string, fields: CredentialField[]) {
+
+    fields = fields.map(f => {
+      return {
+        id: f.id,
+        title: this.encryptionService.encrypt(f.title),
+        fieldType: f.fieldType,
+        value: this.encryptionService.encrypt(f.value)
+      }
+    })
+    return new Promise((resolve, reject) => {
+      this.credentialService.updateCredential({
+        id,
+        body: fields
+      }).subscribe({
+        next: () => {resolve(true)},
+        error: e => {
+          this.toastService.showError(e)
+          reject()
+        }
+      })
+    })
+  }
+
+
+  async createCredential(title: string, vault: string) {
+    return new Promise((resolve, reject) => {
+      this.credentialService.createCredential(vault, {
+        title: this.encryptionService.encrypt(title),
+        body: []
+      }).subscribe({
+        next: () => {resolve(true)},
+        error: e => {
+          this.toastService.showError(e)
+          reject()
+        }
+      })
+    })
+  }
+
+
+  async deleteCredential(credentialId: string) {
+    return new Promise((resolve, reject) => {
+      this.credentialService.deleteCredential(credentialId).subscribe({
+        next: () => resolve(true),
+        error: e => {
+          this.toastService.showError(e)
+          reject()
+        }
+      })
+    })
+  }
 
 }

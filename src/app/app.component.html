@@ -1,2 +1,12 @@
+
+<div class="backend-info">
+  <h1>{{response.name}}</h1>
+  <h5>{{response.version}}</h5>
+  @if (response.development) {
+    <p><b>WARNING:</b> This is a development build. Some features may be incomplete, buggy, or subject to change. This version does not represent the quality or stability of the final release. </p>
+  }
+</div>
+
 <router-outlet></router-outlet>
 <p-toast></p-toast>
+

@@ -26,20 +26,26 @@ export class EncryptionService {
   }
 
   decrypt(base64Encoded: string): string {
-    const keyBytes = forge.util.decode64(this.keystoreService.aesKey()!)
+    try {
+      const keyBytes = forge.util.decode64(this.keystoreService.aesKey()!)
 
-    const iv = base64Encoded.split("::")[0]
-    const encryptedString = base64Encoded.split("::")[1]
+      const iv = base64Encoded.split("::")[0]
+      const encryptedString = base64Encoded.split("::")[1]
 
 
-    const decipher = forge.cipher.createDecipher("AES-CBC", keyBytes)
+      const decipher = forge.cipher.createDecipher("AES-CBC", keyBytes)
 
-    decipher.start({iv: forge.util.decode64(iv)})
-    decipher.update(forge.util.createBuffer(forge.util.decode64(encryptedString), "raw"))
+      decipher.start({iv: forge.util.decode64(iv)})
+      decipher.update(forge.util.createBuffer(forge.util.decode64(encryptedString), "raw"))
 
-    decipher.finish()
+      decipher.finish()
 
-    return decipher.output.getBytes()
+
+      return decipher.output.toString()
+    } catch (e) {
+      console.log(e)
+      return "Error while decrypting. Please see console for more informations"
+    }
   }
 
 }

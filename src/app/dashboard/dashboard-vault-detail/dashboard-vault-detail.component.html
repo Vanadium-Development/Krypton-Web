@@ -1,2 +1,147 @@
-<h2>{{selectedVault()?.title || "Loading..."}}</h2>
-<small>{{selectedVault()?.description || "Loading..."}}</small>
+<script src="dashboard-vault-detail.component.ts"></script>
+<div>
+  <h2>{{ selectedVault()?.title || "Loading..." }}</h2>
+  <small>{{ selectedVault()?.description || "Loading..." }}</small>
+
+</div>
+<p-confirmDialog></p-confirmDialog>
+<p-overlayPanel #createCredentialPanel>
+  <ng-template pTemplate="content">
+    <h3>Create credential</h3>
+    <form [formGroup]="createCredentialForm" (ngSubmit)="submitCredentialCreation()">
+      <input [formControl]="createCredentialForm.controls.name" pInputText type="text" placeholder="Name">
+
+      <button type="submit" pButton class="p-button-outlined p-button-success">Create</button>
+    </form>
+  </ng-template>
+</p-overlayPanel>
+
+
+<button id="create-button" pButton (click)="createCredentialPanel.toggle($event)">Create new credential</button>
+
+<div class="credentials">
+  <p-accordion>
+
+    @if (selectedVault()) {
+      @for (credential of selectedVault()!!.credentials;track credential.id) {
+        <p-accordionTab>
+
+          <ng-template pTemplate="header">
+            <div class="credential-header">
+              <span>{{credential.title}}</span>
+              @if (currentlyEditing() != credential.id) {
+                <div class="buttons">
+                  <button (click)="setCurrentlyEdited(credential.id!!, $event)" pButton class="p-button-sm p-button-outlined p-button-warning">
+                <span class="material-symbols-outlined">
+                  edit
+                </span>
+                  </button>
+                  <button (click)="deleteCredential(credential.id!!,credential.title,$event)" pButton class="p-button-sm p-button-outlined p-button-danger">
+                  <span class="material-symbols-outlined">
+                  delete
+                  </span>
+                  </button>
+                </div>
+              } @else {
+                <div class="buttons">
+                  <button (click)="setCurrentlyEdited('', $event)" pButton class="p-button-sm p-button-danger">Cancel</button>
+                  <button (click)="saveCurrentCredentialFields($event)" pButton class="p-button-sm p-button-success">Finish</button>
+                </div>
+              }
+            </div>
+          </ng-template>
+
+          @if (currentlyEditing() == credential.id && currentlyEditingModel()) {
+            @for (field of currentlyEditingModel(); track field.id) {
+              <small class="field-title">{{ field.title }}</small>
+
+              <p-inputGroup>
+                <input pInputText [(ngModel)]="field.value">
+                <button (click)="deleteCredentialFieldFromCurrentlyEditingModel(field.id!!)" type="button" class="p-button-danger p-button-outlined" pButton>
+                  <span class="material-symbols-outlined">
+                  delete
+                  </span>
+                </button>
+              </p-inputGroup>
+            }
+
+            <div class="add-field">
+              <p-dropdown [options]="fieldTypes" [(ngModel)]="addFieldState().fieldType" dataKey="value" optionLabel="name" [showClear]="true" placeholder="Select a field type"></p-dropdown>
+
+              @if (addFieldState().fieldType.value) {
+
+                <input id="add-field-title" [(ngModel)]='addFieldState().title' pInputText placeholder="Title">
+
+
+                @if (addFieldState().title) {
+                  @if (addFieldState().fieldType.value == "password" || addFieldState().fieldType.value == "otp" || addFieldState().fieldType.value == "username") {
+                    <input id="add-field-value" [(ngModel)]='addFieldState().value' pInputText placeholder="Value">
+                  } @else if (addFieldState().fieldType.value == 'secret') {
+
+                  }
+
+                  <button pButton (click)="addCredentialField()" class="p-button-success">Create</button>
+                }
+
+              }
+            </div>
+          } @else {
+            @for (field of credential.body;track field.id) {
+              <small class="field-title">{{ field.title }}</small>
+
+              @if (field.fieldType == "password") {
+                <p-inputGroup>
+                  <input pInputText value="{{field.value}}" [type]="this.isCredentialFieldToggled(field.id!!) ? 'text' : 'password'" disabled>
+                  <button type="button" pButton (click)="toggleCredentialFields(field.id!!)">
+                  <span class="material-symbols-outlined">
+                  @if (isCredentialFieldToggled(field.id!!)) {
+                    lock_open
+                  } @else {
+                    lock
+                  }
+                  </span>
+                  </button>
+                  <button type="button" pButton class="p-button-outlined" (click)="copyValue(field.value!!)">
+                  <span class="material-symbols-outlined">
+                  content_copy
+                  </span>
+                  </button>
+                </p-inputGroup>
+              } @else if (field.fieldType == "username") {
+                <p-inputGroup>
+                  <input pInputText value="{{field.value}}" disabled>
+                  <button type="button" pButton class="p-button-outlined" (click)="copyValue(field.value!!)">
+                  <span class="material-symbols-outlined">
+                  content_copy
+                  </span>
+                  </button>
+                </p-inputGroup>
+              } @else if (field.fieldType == "otp") {
+                <small>&nbsp; Expires in {{calculateExpiresSeconds(otpService.generateOtp(field.value).expires)}} seconds.</small>
+                <p-inputGroup>
+                  <input pInputText value="{{otpService.generateOtp(field.value).otp}}" disabled>
+                  <button type="button" pButton class="p-button-outlined" (click)="copyValue(otpService.generateOtp(field.value).otp)">
+                  <span class="material-symbols-outlined">
+                  content_copy
+                  </span>
+                  </button>
+                </p-inputGroup>
+              }
+
+
+            }
+          }
+
+        </p-accordionTab>
+      }
+    }
+
+
+  </p-accordion>
+
+</div>
+
+
+
+
+

@@ -1,0 +1,36 @@
+.credentials {
+  margin: 20px 0 20px 0;
+}
+
+#create-button {
+  margin-top: 10px
+}
+
+.credential-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.buttons {
+  display: flex;
+  gap: 5px
+}
+
+#add-field-btn {
+  margin-top: 5px
+}
+
+#add-field-value {
+  width: 100%;
+  margin-top: 5px;
+}
+
+.add-field {
+  border: 1px solid #3b3b3b;
+  margin: 10px;
+  padding: 5px;
+  border-radius: 5px;
+}
+

@@ -11,6 +11,7 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/
 import {KeystoreService} from "../../service/keystore.service";
 import {BackendService} from "../../service/backend.service";
 import {SidebarComponent} from "../components/sidebar/sidebar.component";
+import {VaultService} from "../../service/vault.service";
 
 @Component({
   selector: 'app-dashboard-layout',
@@ -34,6 +35,7 @@ export class DashboardLayoutComponent implements OnInit {
   uiBlockService = inject(UiBlockService)
   keystoreService = inject(KeystoreService)
   backendService = inject(BackendService)
+  vaultService=  inject(VaultService)
 
   passwordPromptError = signal("")
 
@@ -51,6 +53,8 @@ export class DashboardLayoutComponent implements OnInit {
         this.uiBlockService.privateKeyPasswordBlock.set(false)
 
         await this.backendService.checkTokenAvailability()
+        await this.backendService.updateAesKey()
+        await this.vaultService.loadVaults()
 
         return
       }
